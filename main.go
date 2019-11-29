@@ -1,20 +1,20 @@
 package main
 
 import (
-	"Go_Overwall/conf"
+	"Go_Overwall/config"
 	"Go_Overwall/encryption"
 )
 
 func main() {
-	cfg := conf.GetCfg()
+	config := config.GetConfig()
 	// test encode and decode
 	b := []byte{30, 25, 7, 8, 2}
 	encryArray := encryption.RandEncryArray()
 	cipher := encryption.NewCipher(encryArray)
 	cipher.Encode(b)
-	sugar := cfg.Logger.Sugar()
+	sugar := config.Logger.Sugar()
 	defer sugar.Sync()
 	sugar.Info(b)
 	cipher.Decode(b)
-	sugar.Info(b)
+	sugar.Info(config.Freedom.Port)
 }

@@ -24,7 +24,6 @@ func (cipher *Cipher) Decode(arr []byte) {
 func NewCipher(arr *EncrypArray) (c *Cipher) {
 	decodeEncrypArray := &EncrypArray{}
 	for i, v := range arr {
-		arr[i] = v
 		decodeEncrypArray[v] = byte(i)
 	}
 	c = new(Cipher)
