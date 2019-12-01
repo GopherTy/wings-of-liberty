@@ -1,8 +1,8 @@
 package main
 
 import (
-	"Go_Overwall/config"
-	"Go_Overwall/encryption"
+	"wings-of-liberty/config"
+	"wings-of-liberty/encryption"
 )
 
 func main() {
@@ -11,10 +11,10 @@ func main() {
 	b := []byte{30, 25, 7, 8, 2}
 	encryArray := encryption.RandEncryArray()
 	cipher := encryption.NewCipher(encryArray)
-	cipher.Encode(b)
+	cipher.Encrypt(b)
 	sugar := config.Logger.Sugar()
 	defer sugar.Sync()
 	sugar.Info(b)
-	cipher.Decode(b)
+	cipher.Decrypt(b)
 	sugar.Info(config.Freedom.Port)
 }
