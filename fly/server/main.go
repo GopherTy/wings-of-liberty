@@ -15,7 +15,7 @@ func main() {
 	defer sugar.Sync()
 
 	arr := encryption.RandEncryArray()
-	laddrStr := cfg.Freedom.LocalAddr + ":" + strconv.Itoa(cfg.Freedom.RemotoPort)
+	laddrStr := ":" + strconv.Itoa(cfg.Freedom.RemotoPort)
 	local, err := net.ResolveTCPAddr("tcp", laddrStr)
 	if err != nil {
 		log.Fatalln(err)
