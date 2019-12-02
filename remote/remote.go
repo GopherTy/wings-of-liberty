@@ -1,11 +1,11 @@
-package server
+package remote
 
 import (
-	"Go_Overwall/config"
-	"Go_Overwall/core"
-	"Go_Overwall/encryption"
 	"encoding/binary"
 	"net"
+	"wings-of-liberty/config"
+	"wings-of-liberty/core"
+	"wings-of-liberty/encryption"
 )
 
 // Server cross firewall server
@@ -16,20 +16,23 @@ type Server struct {
 // Listen listening local proxy request
 func (s *Server) Listen() (err error) {
 	config := config.GetConfig()
-	suger := config.Logger.Sugar()
-	defer suger.Sync()
+	sugar := config.Logger.Sugar()
+	defer sugar.Sync()
 
 	listener, err := net.ListenTCP("tcp", s.ListenAddr)
 	if err != nil {
 		return
 	}
 	defer listener.Close()
-
+	var conn *net.TCPConn
 	for {
-		conn, err := listener.AcceptTCP()
+		conn, err = listener.AcceptTCP()
 		if err != nil {
-			suger.Warnf("server accept fail %v", err)
+			sugar.Warnf("server accept fail %v", err)
 			continue
+		}
+		if conn == nil {
+			return
 		}
 		conn.SetLinger(0)
 		go s.handleConn(conn)
@@ -40,7 +43,7 @@ func (s *Server) handleConn(conn *net.TCPConn) (err error) {
 	defer conn.Close()
 	buf := make([]byte, encryption.ARRAYLEN)
 
-	// recive socket protocol
+	// recive client  socks5 protocol encryption data
 	/**
 	   The localConn connects to the dstServer, and sends a ver
 	   identifier/method selection message:
@@ -67,7 +70,7 @@ func (s *Server) handleConn(conn *net.TCPConn) (err error) {
 		          | 1  |   1    |
 		          +----+--------+
 	*/
-	// don't verification
+	// the content of  socks5 protocol response. don't verification
 	_, err = s.EncryptData(conn, []byte{VER, VERIFICATIONDONT})
 	if err != nil {
 		return
@@ -115,7 +118,7 @@ func (s *Server) handleConn(conn *net.TCPConn) (err error) {
 		Port: int(binary.BigEndian.Uint16(remotePort)),
 	}
 
-	// real remote address
+	// request real  address
 	server, err := net.DialTCP("tcp", nil, remoteAddr)
 	if err != nil {
 		return

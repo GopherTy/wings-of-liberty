@@ -1,10 +1,11 @@
-package client
+package local
 
 import (
-	"Go_Overwall/config"
-	"Go_Overwall/core"
-	"Go_Overwall/encryption"
 	"net"
+	"os"
+	"wings-of-liberty/config"
+	"wings-of-liberty/core"
+	"wings-of-liberty/encryption"
 )
 
 // Client  cross firewall client
@@ -13,15 +14,12 @@ type Client struct {
 }
 
 // Listen listen local port
-func (c *Client) Listen(didListen func(listenAdd net.Addr)) (err error) {
+func (c *Client) Listen() (err error) {
 	listener, err := net.ListenTCP("tcp", c.ListenAddr)
 	if err != nil {
 		return
 	}
 	defer listener.Close()
-	if didListen != nil {
-		didListen(listener.Addr())
-	}
 
 	var conn *net.TCPConn
 	config := config.GetConfig()
@@ -34,29 +32,27 @@ func (c *Client) Listen(didListen func(listenAdd net.Addr)) (err error) {
 			sugar.Warnf("client accept fail %v", err)
 			continue
 		}
-		err := conn.SetLinger(0)
-		if err != nil {
-			conn.Close()
-			sugar.Warnf("client clear data fail %v", err)
-			continue
+		if conn == nil {
+			return
 		}
+		conn.SetLinger(0)
 		go c.handleConn(conn)
 	}
 }
 
 func (c *Client) handleConn(conn *net.TCPConn) {
-	defer conn.Close()
 	config := config.GetConfig()
 	sugar := config.Logger.Sugar()
+
 	defer sugar.Sync()
-
+	defer conn.Close()
 	proxyServer, err := c.DailRemoteServer()
-	defer proxyServer.Close()
-
 	if err != nil {
-		sugar.Warn("dail remote server fail %v", err)
-		return
+		sugar.Warn(err)
+		os.Exit(1)
 	}
+
+	defer proxyServer.Close()
 
 	go func() {
 		err = c.DecryptCopy(conn, proxyServer)

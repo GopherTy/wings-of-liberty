@@ -19,8 +19,10 @@ type Config struct {
 
 // Freedom cross greate firewall configuration object
 type Freedom struct {
-	Port int    `json:"Port"`
-	Addr string `json:"Addr"`
+	LocalAddr  string `json:"LocalAddr"`
+	LocalPort  int    `json:"LocalPort"`
+	RemotoAddr string `json:"RemotoAddr"`
+	RemotoPort int    `json:"RemotoPort"`
 }
 
 //	initialize configuration object

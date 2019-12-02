@@ -1,4 +1,4 @@
-package server
+package remote
 
 const (
 	// VER sockts5 version  defualt  0x05  lenght 1

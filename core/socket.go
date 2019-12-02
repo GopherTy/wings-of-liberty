@@ -1,10 +1,9 @@
 package core
 
 import (
-	"Go_Overwall/encryption"
-	"fmt"
 	"io"
 	"net"
+	"wings-of-liberty/encryption"
 )
 
 // SecoureSocket encrypt structure  which is socket data
@@ -92,7 +91,6 @@ func (s *SecoureSocket) DecryptCopy(dst, src *net.TCPConn) (err error) {
 func (s *SecoureSocket) DailRemoteServer() (remoteConn *net.TCPConn, err error) {
 	remoteConn, err = net.DialTCP("tcp", nil, s.RemoteAddr)
 	if err != nil {
-		err = fmt.Errorf("connection remote server fail,server name %s, %s", s.RemoteAddr, err)
 		return
 	}
 	return
