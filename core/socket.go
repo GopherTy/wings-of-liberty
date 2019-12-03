@@ -25,10 +25,10 @@ func (s *SecoureSocket) DecryptData(conn *net.TCPConn, buf []byte) (n int, err e
 	return
 }
 
-// EncryptData .
+// EncryptData encrypt data from conn and forward
 func (s *SecoureSocket) EncryptData(conn *net.TCPConn, buf []byte) (n int, err error) {
 	// encrypt data into buffer slice
-	s.Cipher.Decrypt(buf)
+	s.Cipher.Encrypt(buf)
 	// write encryption data into output stream
 	n, err = conn.Write(buf)
 	if err != nil {
@@ -37,7 +37,7 @@ func (s *SecoureSocket) EncryptData(conn *net.TCPConn, buf []byte) (n int, err e
 	return
 }
 
-// EncryptCopy .
+// EncryptCopy read data from src and forward encrypted data by dst
 func (s *SecoureSocket) EncryptCopy(dst, src *net.TCPConn) (err error) {
 	var r, w int
 	buf := make([]byte, encryption.ARRAYLEN)
@@ -62,7 +62,7 @@ func (s *SecoureSocket) EncryptCopy(dst, src *net.TCPConn) (err error) {
 	}
 }
 
-// DecryptCopy .
+// DecryptCopy read data from src and forward decryption data by dst
 func (s *SecoureSocket) DecryptCopy(dst, src *net.TCPConn) (err error) {
 	var r, w int
 	buf := make([]byte, encryption.ARRAYLEN)
@@ -87,8 +87,8 @@ func (s *SecoureSocket) DecryptCopy(dst, src *net.TCPConn) (err error) {
 	}
 }
 
-// DailRemoteServer .
-func (s *SecoureSocket) DailRemoteServer() (remoteConn *net.TCPConn, err error) {
+// DialRemoteServer dial remote server
+func (s *SecoureSocket) DialRemoteServer() (remoteConn *net.TCPConn, err error) {
 	remoteConn, err = net.DialTCP("tcp", nil, s.RemoteAddr)
 	if err != nil {
 		return

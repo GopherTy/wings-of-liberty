@@ -83,7 +83,7 @@ func (s *Server) handleConn(conn *net.TCPConn) (err error) {
 	  | 1  |  1  | X'00' |  1   | Variable |    2     |
 	  +----+-----+-------+------+----------+----------+
 	*/
-	// get remote address
+	// recive data and get remote address
 	n, err := s.DecryptData(conn, buf)
 	if err != nil || n < 7 {
 		return
@@ -126,7 +126,8 @@ func (s *Server) handleConn(conn *net.TCPConn) (err error) {
 	defer server.Close()
 	server.SetLinger(0)
 
-	// response client
+	// respond to a proxy client that sends real server address data
+	// as long as the data meets the socks5 protocol response format.
 	/**
 	  +----+-----+-------+------+----------+----------+
 	  |VER | REP |  RSV  | ATYP | BND.ADDR | BND.PORT |
@@ -138,6 +139,7 @@ func (s *Server) handleConn(conn *net.TCPConn) (err error) {
 	if err != nil {
 		return
 	}
+	// recive encryption data and forward
 	go func() {
 		err = s.DecryptCopy(server, conn)
 		if err != nil {
@@ -145,6 +147,7 @@ func (s *Server) handleConn(conn *net.TCPConn) (err error) {
 			server.Close()
 		}
 	}()
+	// recive proxy server  data and response to a proxy client
 	s.EncryptCopy(conn, server)
 	return
 }

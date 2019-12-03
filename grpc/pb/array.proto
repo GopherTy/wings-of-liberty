@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+service Array {
+    rpc GetEncryptionArray (ArrayRequest) returns (ArrayResponse);
+} 
+
+message ArrayRequest{
+}
+
+message ArrayResponse{
+    bytes Array = 1; 
+}

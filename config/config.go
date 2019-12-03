@@ -35,6 +35,7 @@ func init() {
 	if err != nil {
 		log.Fatalf("initializate config fail %v", err)
 	}
+	defer file.Close()
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&config)
 	if err != nil {

@@ -13,7 +13,7 @@ type Client struct {
 	*core.SecoureSocket
 }
 
-// Listen listen local port
+// Listen listening local address
 func (c *Client) Listen() (err error) {
 	listener, err := net.ListenTCP("tcp", c.ListenAddr)
 	if err != nil {
@@ -46,14 +46,15 @@ func (c *Client) handleConn(conn *net.TCPConn) {
 
 	defer sugar.Sync()
 	defer conn.Close()
-	proxyServer, err := c.DailRemoteServer()
+	//get remote connection object
+	proxyServer, err := c.DialRemoteServer()
 	if err != nil {
 		sugar.Warn(err)
 		os.Exit(1)
 	}
 
 	defer proxyServer.Close()
-
+	// recive data
 	go func() {
 		err = c.DecryptCopy(conn, proxyServer)
 		if err != nil {
@@ -61,7 +62,7 @@ func (c *Client) handleConn(conn *net.TCPConn) {
 			proxyServer.Close()
 		}
 	}()
-
+	// send data
 	c.EncryptCopy(proxyServer, conn)
 }
 
