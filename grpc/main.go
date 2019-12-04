@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net"
+	"wings-of-liberty/encryption"
 	array "wings-of-liberty/grpc/code"
 	"wings-of-liberty/grpc/service"
 
@@ -12,17 +13,22 @@ import (
 )
 
 func main() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	listener, err := net.Listen("tcp", service.Address)
 	if err != nil {
 		log.Fatalln("listen grpc server  fail ", err, service.Address)
 	}
+
 	// regist array server
 	s := grpc.NewServer()
-	array.RegisterArrayServer(s, &service.Server{})
+	arr := encryption.RandEncryArray()
+	array.RegisterArrayServer(s, &service.Server{
+		Array: arr,
+	})
 	reflection.Register(s)
-	log.Println("grpc array service running ...")
+
+	log.Println("GRPC service running ...")
+
 	if err := s.Serve(listener); err != nil {
-		log.Fatalln("grpc server start fail ", err)
+		log.Fatalf("grpc server start fail ,%v", err)
 	}
 }
