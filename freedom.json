@@ -1,8 +1,8 @@
 {
     "Freedom": {
         "LocalAddr":"127.0.0.1",
-        "LocalPort":7448,
-        "RemotoAddr":"xxxxx",
-        "RemotoPort":10000
+        "LocalPort":7963,
+        "RemotoAddr":"xxxx",
+        "RemotoPort":9000
     }
 }

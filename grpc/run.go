@@ -1,4 +1,4 @@
-package main
+package grpc
 
 import (
 	"log"
@@ -12,7 +12,8 @@ import (
 	"google.golang.org/grpc"
 )
 
-func main() {
+// Run run grpc service
+func Run() {
 	listener, err := net.Listen("tcp", service.Address)
 	if err != nil {
 		log.Fatalln("listen grpc server  fail ", err, service.Address)

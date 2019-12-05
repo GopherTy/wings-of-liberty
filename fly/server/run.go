@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -7,48 +7,34 @@ import (
 	"wings-of-liberty/config"
 	"wings-of-liberty/encryption"
 	array "wings-of-liberty/grpc/code"
-	"wings-of-liberty/local"
+	"wings-of-liberty/remote"
 
 	"google.golang.org/grpc"
 )
 
-const (
-	// DefaultListenAddr default local address
-	DefaultListenAddr = ":7448"
-)
-
-func main() {
+// Run running app
+func Run() {
 	cfg := config.GetConfig()
 	sugar := cfg.Logger.Sugar()
 	defer sugar.Sync()
 
+	// grpc service to get encryption array
 	arr, err := grpcArrayService(cfg)
 	if err != nil {
 		sugar.Fatal(err)
 	}
-	laddrStr := cfg.Freedom.LocalAddr + ":" +
-		strconv.Itoa(cfg.Freedom.LocalPort)
-	raddrStr := cfg.Freedom.RemotoAddr + ":" +
-		strconv.Itoa(cfg.Freedom.RemotoPort)
 
-	laddr, err := net.ResolveTCPAddr("tcp", laddrStr)
+	laddrStr := ":" + strconv.Itoa(cfg.Freedom.RemotoPort)
+	local, err := net.ResolveTCPAddr("tcp", laddrStr)
 	if err != nil {
 		sugar.Fatal(err)
 	}
-	remote, err := net.ResolveTCPAddr("tcp", raddrStr)
+
+	s := remote.NewServer(arr, local)
+	sugar.Info("Server running ... ")
+	err = s.Listen()
 	if err != nil {
 		sugar.Fatal(err)
-	}
-	// create a client
-	client := local.NewClient(arr, laddr, remote)
-	sugar.Infof("client running, local address is %s, remoto address is %s",
-		laddrStr,
-		raddrStr,
-	)
-
-	err = client.Listen()
-	if err != nil {
-		return
 	}
 }
 
@@ -57,9 +43,7 @@ func grpcArrayService(cfg *config.Config) (arr *encryption.EncrypArray, err erro
 	sugar := cfg.Logger.Sugar()
 	defer sugar.Sync()
 
-	addr := cfg.Freedom.RemotoAddr + ":" + "10000"
-
-	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+	conn, err := grpc.Dial(":10000", grpc.WithInsecure())
 	if err != nil {
 		sugar.Fatal("grpc service start fail ", err)
 	}
