@@ -1,3 +1,3 @@
 # /bin/bash
 
-go build -o wings-of-liberty main.go
+go build -o bin/wings-of-liberty main.go
