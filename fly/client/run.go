@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"wings-of-liberty/config"
 	"wings-of-liberty/encryption"
-	array "wings-of-liberty/grpc/code"
+	grpc_protofile_array "wings-of-liberty/grpc/protofile"
 	"wings-of-liberty/local"
 
 	"google.golang.org/grpc"
@@ -59,8 +59,8 @@ func grpcArrayService(cfg *config.Config) (arr *encryption.EncrypArray, err erro
 	if err != nil {
 		sugar.Fatal("grpc service start fail ", err)
 	}
-	gClient := array.NewArrayClient(conn)
-	resp, err := gClient.GetEncryptionArray(context.Background(), &array.ArrayRequest{})
+	gClient := grpc_protofile_array.NewArrayClient(conn)
+	resp, err := gClient.GetEncryptionArray(context.Background(), &grpc_protofile_array.ArrayRequest{})
 	if err != nil {
 		sugar.Fatal("recive grpc service data fail ", err)
 	}

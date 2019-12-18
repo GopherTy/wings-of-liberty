@@ -4,7 +4,7 @@ import (
 	"log"
 	"net"
 	"wings-of-liberty/encryption"
-	array "wings-of-liberty/grpc/code"
+	grpc_protofile_array "wings-of-liberty/grpc/protofile"
 	"wings-of-liberty/grpc/service"
 
 	"google.golang.org/grpc/reflection"
@@ -22,7 +22,7 @@ func Run() {
 	// regist array server
 	s := grpc.NewServer()
 	arr := encryption.RandEncryArray()
-	array.RegisterArrayServer(s, &service.Server{
+	grpc_protofile_array.RegisterArrayServer(s, &service.Server{
 		Array: arr,
 	})
 	reflection.Register(s)

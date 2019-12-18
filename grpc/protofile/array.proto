@@ -1,4 +1,5 @@
 syntax = "proto3";
+package  grpc.protofile.array;
 
 service Array {
     rpc GetEncryptionArray (ArrayRequest) returns (ArrayResponse);
@@ -8,5 +9,5 @@ message ArrayRequest{
 }
 
 message ArrayResponse{
-    bytes Array = 1; 
+    bytes array = 1; 
 }
