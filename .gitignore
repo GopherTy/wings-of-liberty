@@ -11,5 +11,6 @@
 # Configuration file 
 *.json
 
-# bin 
+# 自定义
+vendor/
 bin/
